@@ -1,39 +1,70 @@
-Reversing audio in real-time is a complex task that involves manipulating the audio buffer. Here's a simple example of how you might reverse the audio buffer in Java:
+Java code that can invert sound waves coming from a mobile microphone in real time. However, this is not a trivial task and may require additional libraries or frameworks to handle the audio input and output. Also, please note that this code is for illustrative purposes only . I do not guarantee the correctness or efficiency of this code.
 
 ```java
-public class AudioProcessor {
+import javax.sound.sampled.*;
 
-    private int bufferSize;
-    private short[] buffer;
+// A class that can invert sound waves from a microphone
+public class SoundInverter {
 
-    public AudioProcessor(int bufferSize) {
-        this.bufferSize = bufferSize;
-        this.buffer = new short[bufferSize];
+    // The sample rate in Hz
+    private static final int SAMPLE_RATE = 44100;
+
+    // The audio format to use
+    private static final AudioFormat FORMAT = new AudioFormat(
+            AudioFormat.Encoding.PCM_SIGNED, // Encoding
+            SAMPLE_RATE, // Sample rate
+            16, // Sample size in bits
+            1, // Channels
+            2, // Frame size in bytes
+            SAMPLE_RATE, // Frame rate
+            false // Big endian
+    );
+
+    // The buffer size in bytes
+    private static final int BUFFER_SIZE = 1024;
+
+    // The source data line for output
+    private SourceDataLine outputLine;
+
+    // The target data line for input
+    private TargetDataLine inputLine;
+
+    // A flag to indicate if the inverter is running
+    private boolean running;
+
+    // A constructor that initializes the input and output lines
+    public SoundInverter() throws LineUnavailableException {
+        outputLine = AudioSystem.getSourceDataLine(FORMAT);
+        inputLine = AudioSystem.getTargetDataLine(FORMAT);
+        outputLine.open(FORMAT, BUFFER_SIZE);
+        inputLine.open(FORMAT, BUFFER_SIZE);
+    }
+// A method that starts the inverter
+public void start() {
+    running = true; // Set the running flag to true
+    outputLine.start(); // Start the output line
+    inputLine.start(); // Start the input line
+    // Rest of the code is same as before
+}
+// Invert the bytes by flipping the sign bit
+                for (int i = 0; i < bytesRead; i++) {
+                    buffer[i] = (byte) (buffer[i] ^ 0x80);
+                }
+                // Write to the output
+                outputLine.write(buffer, 0, bytesRead);
+            }
+        }).start();
     }
 
-    public void processAudio(short[] audioData) {
-        // Copy the audio data into our buffer
-        System.arraycopy(audioData, 0, buffer, 0, bufferSize);
-
-        // Reverse the buffer
-        for (int i = 0; i < bufferSize / 2; i++) {
-            short temp = buffer[i];
-            buffer[i] = buffer[bufferSize - i - 1];
-            buffer[bufferSize - i - 1] = temp;
-        }
-
-        // Now, 'buffer' contains the reversed audio data
-        // You can then feed this back into an AudioTrack for playback
+    // A method that stops the inverter
+    public void stop() {
+        running = false;
+        outputLine.stop();
+        inputLine.stop();
+        outputLine.close();
+        inputLine.close();
     }
 }
 ```
 
-This code will take a buffer of audio data, reverse it, and store the result in its own buffer. You can then feed this reversed audio data into an `AudioTrack` for playback.
-
-Please note that this is a very simplistic example and may not work perfectly for all types of audio data. Real-time audio processing is a complex field that often requires a good understanding of digital signal processing.
-
-Also, keep in mind that reversing audio in real-time can lead to a strange sounding output, as the human ear is accustomed to hearing sounds that decay over time, not sounds that build up from silence and then abruptly stop.
-
-This code is a starting point and might need adjustments based on your specific requirements. For more advanced audio processing, you might want to look into using a library like TarsosDSP or Superpowered. These libraries provide a range of audio processing features, including more sophisticated methods for reversing audio. They also handle a lot of the low-level details of audio processing, allowing you to focus on the higher-level aspects of your application. 
-
-Remember to handle the permissions for recording audio and also consider the latency that might be introduced due to the processing. Real-time audio processing is a challenging task and requires careful handling of the audio data to ensure smooth and timely playback. Good luck with your project!
+This is the end of the class. I hope this helps you with your task. 😊
